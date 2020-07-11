@@ -26,6 +26,8 @@ public class ExtensionModule extends AbstractModule {
 
     @Override
     protected void configure() {
+        bind(ExtensionConfiguration.class)
+                .toInstance(extensionConfiguration);
         bind(ClientLifecycleEventListenerProvider.class)
                 .to(ClientLifecycleEventListenerProviderImpl.class);
         bind(ClientLifecycleEventListener.class)
@@ -37,6 +39,6 @@ public class ExtensionModule extends AbstractModule {
         bind(SubscribeInboundInterceptor.class)
                 .to(SubscribeInboundInterceptorImpl.class);
         bind(MqProducer.class)
-                .toInstance(new KafkaMqProducerImpl(extensionConfiguration));
+                .to(KafkaMqProducerImpl.class);
     }
 }

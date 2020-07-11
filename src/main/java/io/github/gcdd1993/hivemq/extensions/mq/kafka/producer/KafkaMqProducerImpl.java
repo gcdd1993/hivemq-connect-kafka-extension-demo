@@ -1,5 +1,6 @@
 package io.github.gcdd1993.hivemq.extensions.mq.kafka.producer;
 
+import com.google.inject.Inject;
 import com.hivemq.extension.sdk.api.annotations.NotNull;
 import io.github.gcdd1993.hivemq.extensions.mq.kafka.config.ExtensionConfiguration;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +28,7 @@ public class KafkaMqProducerImpl implements MqProducer {
 
     private final AtomicLong counter = new AtomicLong();
 
+    @Inject
     public KafkaMqProducerImpl(ExtensionConfiguration configuration) {
         SenderOptions<UUID, Object> senderOptions = SenderOptions.create(configuration.producerConfig());
 

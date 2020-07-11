@@ -1,5 +1,7 @@
 package io.github.gcdd1993.hivemq.extensions.mq.kafka.topics;
 
+import io.github.gcdd1993.hivemq.extensions.mq.kafka.topics.internal.TopicWrapper;
+
 import java.util.Map;
 
 /**
@@ -12,7 +14,7 @@ public interface TopicMapper {
      *
      * @return <mqtt-topic, kafka-topic>
      */
-    Map<String, String> getMappings();
+    Map<TopicWrapper, String> getMappings();
 
     /**
      * 转换MQTT Topic 到Kafka Topic

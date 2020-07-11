@@ -1,10 +1,7 @@
 package io.github.gcdd1993.hivemq.extensions.mq.kafka.config;
 
 import io.github.gcdd1993.hivemq.extensions.mq.kafka.codec.FstSerializer;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 
@@ -26,6 +23,10 @@ public class ExtensionConfiguration {
     private Map<String, Object> consumer = new HashMap<>();
     @Builder.Default
     private Map<String, Object> producer = new HashMap<>();
+
+    @Getter
+    @Builder.Default
+    private Map<String, String> topicMappings = new HashMap<>();
 
     public Map<String, Object> consumerConfig() {
         mergeWith(consumer, defaultConsumerConfig());
