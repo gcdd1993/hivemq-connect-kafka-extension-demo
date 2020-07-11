@@ -1,0 +1,2 @@
+cluster:
+  bootstrap.servers: '101.132.242.66:9092'

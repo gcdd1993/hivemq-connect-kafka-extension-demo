@@ -16,9 +16,9 @@
  -->
 
 <hivemq-extension>
-    <id>${artifactId}</id>
-    <version>${version}</version>
-    <name>${extension.name}</name>
-    <author>${extension.author}</author>
+    <id>hivemq-connect-kafka-extension</id>
+    <version>1.0-SNAPSHOT</version>
+    <name>HiveMQ Connect Kafka Extension</name>
+    <author>Gcdd1993</author>
     <priority>1000</priority>
 </hivemq-extension>

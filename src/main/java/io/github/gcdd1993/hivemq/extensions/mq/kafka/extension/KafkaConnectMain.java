@@ -7,8 +7,8 @@ import com.hivemq.extension.sdk.api.parameter.ExtensionStartOutput;
 import com.hivemq.extension.sdk.api.parameter.ExtensionStopInput;
 import com.hivemq.extension.sdk.api.parameter.ExtensionStopOutput;
 import com.hivemq.extension.sdk.api.services.Services;
-import io.github.gcdd1993.hivemq.extensions.mq.kafka.config.MqttConnectKafkaConfig;
-import io.github.gcdd1993.hivemq.extensions.mq.kafka.config.MqttConnectKafkaConfigReader;
+import io.github.gcdd1993.hivemq.extensions.mq.kafka.config.ExtensionConfiguration;
+import io.github.gcdd1993.hivemq.extensions.mq.kafka.config.ExtensionConfigurationReader;
 import io.github.gcdd1993.hivemq.extensions.mq.kafka.events.ClientLifecycleEventListenerProviderImpl;
 import io.github.gcdd1993.hivemq.extensions.mq.kafka.initializer.ClientInitializerImpl;
 import io.github.gcdd1993.hivemq.extensions.mq.kafka.producer.KafkaMqProducerImpl;
@@ -23,8 +23,7 @@ public class KafkaConnectMain implements ExtensionMain {
                                @NotNull ExtensionStartOutput extensionStartOutput) {
         loadConfig(extensionStartInput, extensionStartOutput)
                 .ifPresent(config -> {
-                    var bootstrapServers = config.getBootstrapServers();
-                    var mqProvider = new KafkaMqProducerImpl(bootstrapServers);
+                    var mqProvider = new KafkaMqProducerImpl(config);
                     var initializer = new ClientInitializerImpl(mqProvider);
                     var clientLifecycleEventListenerProvider = new ClientLifecycleEventListenerProviderImpl(mqProvider);
                     Services.initializerRegistry().setClientInitializer(initializer);
@@ -38,11 +37,11 @@ public class KafkaConnectMain implements ExtensionMain {
     public void extensionStop(@NotNull ExtensionStopInput extensionStopInput, @NotNull ExtensionStopOutput extensionStopOutput) {
     }
 
-    private Optional<MqttConnectKafkaConfig> loadConfig(@NotNull ExtensionStartInput extensionStartInput,
+    private Optional<ExtensionConfiguration> loadConfig(@NotNull ExtensionStartInput extensionStartInput,
                                                         @NotNull ExtensionStartOutput extensionStartOutput) {
         try {
-            final var configReader = new MqttConnectKafkaConfigReader(extensionStartInput.getExtensionInformation().getExtensionHomeFolder());
-            return Optional.of(new MqttConnectKafkaConfig(configReader.readProperties()));
+            final var configReader = new ExtensionConfigurationReader(extensionStartInput.getExtensionInformation().getExtensionHomeFolder());
+            return configReader.readConfigFromYamlFile();
         } catch (final Exception e) {
             extensionStartOutput.preventExtensionStartup(extensionStartInput.getExtensionInformation().getName() + " cannot be started");
             log.error(
