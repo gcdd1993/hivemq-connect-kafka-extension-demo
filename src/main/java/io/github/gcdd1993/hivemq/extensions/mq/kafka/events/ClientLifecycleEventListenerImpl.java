@@ -1,5 +1,6 @@
 package io.github.gcdd1993.hivemq.extensions.mq.kafka.events;
 
+import com.google.inject.Inject;
 import com.hivemq.extension.sdk.api.annotations.NotNull;
 import com.hivemq.extension.sdk.api.events.client.ClientLifecycleEventListener;
 import com.hivemq.extension.sdk.api.events.client.parameters.AuthenticationSuccessfulInput;
@@ -9,7 +10,6 @@ import io.github.gcdd1993.hivemq.extensions.mq.kafka.message.internal.DeviceStat
 import io.github.gcdd1993.hivemq.extensions.mq.kafka.message.internal.DeviceStatusMessage;
 import io.github.gcdd1993.hivemq.extensions.mq.kafka.message.internal.DisconnectReason;
 import io.github.gcdd1993.hivemq.extensions.mq.kafka.producer.MqProducer;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.InetAddress;
@@ -18,11 +18,15 @@ import java.net.InetAddress;
  * Created by gaochen on 2020/7/8.
  */
 @Slf4j
-@RequiredArgsConstructor
 public class ClientLifecycleEventListenerImpl implements ClientLifecycleEventListener {
 
     private static final String TOPIC = "hivemq-internal-device-status";
     private final MqProducer mqProducer;
+
+    @Inject
+    public ClientLifecycleEventListenerImpl(MqProducer mqProducer) {
+        this.mqProducer = mqProducer;
+    }
 
     @Override
     public void onMqttConnectionStart(@NotNull ConnectionStartInput connectionStartInput) {

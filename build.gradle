@@ -19,6 +19,8 @@ dependencies {
     implementation 'io.projectreactor.kafka:reactor-kafka:1.2.2.RELEASE'
     implementation 'de.ruedigermoeller:fst:2.57'
     implementation 'org.yaml:snakeyaml:1.26'
+    implementation 'com.google.inject:guice:4.2.3'
+
     compileOnly 'org.projectlombok:lombok:1.18.12'
     annotationProcessor 'org.projectlombok:lombok:1.18.12'
 

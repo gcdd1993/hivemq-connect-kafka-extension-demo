@@ -15,7 +15,7 @@ import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.Queue;
 import java.util.UUID;
-import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Slf4j
@@ -23,7 +23,7 @@ public class KafkaMqProducerImpl implements MqProducer {
 
     private final KafkaSender<UUID, Object> sender;
 
-    private final Queue<Tuple2<String, Object>> queue = new LinkedBlockingDeque<>();
+    private final Queue<Tuple2<String, Object>> queue = new LinkedBlockingQueue<>();
 
     private final AtomicLong counter = new AtomicLong();
 

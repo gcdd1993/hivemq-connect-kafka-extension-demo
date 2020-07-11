@@ -1,20 +1,23 @@
 package io.github.gcdd1993.hivemq.extensions.mq.kafka.interceptors;
 
+import com.google.inject.Inject;
 import com.hivemq.extension.sdk.api.annotations.NotNull;
 import com.hivemq.extension.sdk.api.interceptor.subscribe.SubscribeInboundInterceptor;
 import com.hivemq.extension.sdk.api.interceptor.subscribe.parameter.SubscribeInboundInput;
 import com.hivemq.extension.sdk.api.interceptor.subscribe.parameter.SubscribeInboundOutput;
 import io.github.gcdd1993.hivemq.extensions.mq.kafka.producer.MqProducer;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@RequiredArgsConstructor
 public class SubscribeInboundInterceptorImpl implements SubscribeInboundInterceptor {
 
+    private static final String TOPIC = "hivemq-extension-subscription";
     private final MqProducer mqProducer;
 
-    private static final String TOPIC = "hivemq-extension-subscription";
+    @Inject
+    public SubscribeInboundInterceptorImpl(MqProducer mqProducer) {
+        this.mqProducer = mqProducer;
+    }
 
     @Override
     public void onInboundSubscribe(@NotNull SubscribeInboundInput subscribeInboundInput,

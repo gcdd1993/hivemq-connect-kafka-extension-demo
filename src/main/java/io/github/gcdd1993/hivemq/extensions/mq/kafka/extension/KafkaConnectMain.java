@@ -1,17 +1,17 @@
 package io.github.gcdd1993.hivemq.extensions.mq.kafka.extension;
 
+import com.google.inject.Guice;
 import com.hivemq.extension.sdk.api.ExtensionMain;
 import com.hivemq.extension.sdk.api.annotations.NotNull;
+import com.hivemq.extension.sdk.api.events.client.ClientLifecycleEventListenerProvider;
 import com.hivemq.extension.sdk.api.parameter.ExtensionStartInput;
 import com.hivemq.extension.sdk.api.parameter.ExtensionStartOutput;
 import com.hivemq.extension.sdk.api.parameter.ExtensionStopInput;
 import com.hivemq.extension.sdk.api.parameter.ExtensionStopOutput;
 import com.hivemq.extension.sdk.api.services.Services;
+import com.hivemq.extension.sdk.api.services.intializer.ClientInitializer;
 import io.github.gcdd1993.hivemq.extensions.mq.kafka.config.ExtensionConfiguration;
 import io.github.gcdd1993.hivemq.extensions.mq.kafka.config.ExtensionConfigurationReader;
-import io.github.gcdd1993.hivemq.extensions.mq.kafka.events.ClientLifecycleEventListenerProviderImpl;
-import io.github.gcdd1993.hivemq.extensions.mq.kafka.initializer.ClientInitializerImpl;
-import io.github.gcdd1993.hivemq.extensions.mq.kafka.producer.KafkaMqProducerImpl;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Optional;
@@ -23,10 +23,11 @@ public class KafkaConnectMain implements ExtensionMain {
                                @NotNull ExtensionStartOutput extensionStartOutput) {
         loadConfig(extensionStartInput, extensionStartOutput)
                 .ifPresent(config -> {
-                    var mqProvider = new KafkaMqProducerImpl(config);
-                    var initializer = new ClientInitializerImpl(mqProvider);
-                    var clientLifecycleEventListenerProvider = new ClientLifecycleEventListenerProviderImpl(mqProvider);
-                    Services.initializerRegistry().setClientInitializer(initializer);
+                    var injector = Guice.createInjector(new ExtensionModule(config));
+
+                    var clientInitializer = injector.getInstance(ClientInitializer.class);
+                    var clientLifecycleEventListenerProvider = injector.getInstance(ClientLifecycleEventListenerProvider.class);
+                    Services.initializerRegistry().setClientInitializer(clientInitializer);
                     Services.eventRegistry().setClientLifecycleEventListener(clientLifecycleEventListenerProvider);
 
                     log.info("{} started", extensionStartInput.getExtensionInformation().getName());
