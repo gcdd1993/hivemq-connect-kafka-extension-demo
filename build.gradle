@@ -1,0 +1,51 @@
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow' version '6.0.0'
+    id 'distribution'
+}
+
+repositories {
+    mavenLocal()
+    maven {
+        url = uri('http://maven.aliyun.com/nexus/content/groups/public/')
+    }
+    maven {
+        url = uri('http://repo.maven.apache.org/maven2')
+    }
+}
+
+dependencies {
+    implementation 'com.hivemq:hivemq-extension-sdk:4.3.0'
+    implementation 'io.projectreactor.kafka:reactor-kafka:1.2.2.RELEASE'
+    implementation 'de.ruedigermoeller:fst:2.57'
+    implementation 'org.yaml:snakeyaml:1.26'
+    compileOnly 'org.projectlombok:lombok:1.18.12'
+    annotationProcessor 'org.projectlombok:lombok:1.18.12'
+}
+
+group = 'io.github.gcdd1993.hivemq.extensions'
+version = '1.0-SNAPSHOT'
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
+
+shadowJar {
+    archiveBaseName = project.name
+    archiveVersion = project.version
+    archiveClassifier = null
+}
+
+distributions {
+    main {
+        distributionBaseName = project.name
+        contents {
+            into("/${project.name}") {
+                from shadowJar
+                from 'target/LICENSE.txt'
+                from 'src/main/resources/hivemq-extension.xml'
+                from 'src/main/resources/mqttConnectKafka.yaml'
+                dirMode = 0755
+                fileMode = 0644
+            }
+        }
+    }
+}
