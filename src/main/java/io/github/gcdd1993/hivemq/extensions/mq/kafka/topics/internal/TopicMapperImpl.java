@@ -3,10 +3,10 @@ package io.github.gcdd1993.hivemq.extensions.mq.kafka.topics.internal;
 import com.google.inject.Inject;
 import io.github.gcdd1993.hivemq.extensions.mq.kafka.config.ExtensionConfiguration;
 import io.github.gcdd1993.hivemq.extensions.mq.kafka.topics.TopicMapper;
-import io.github.gcdd1993.hivemq.extensions.mq.kafka.topics.TopicMatcher;
 import reactor.util.function.Tuple2;
 import reactor.util.function.Tuples;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -16,7 +16,11 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class TopicMapperImpl implements TopicMapper {
 
-    private final Map<String, Tuple2<String, TopicWrapper>> topicMappingCache = new ConcurrentHashMap<>();
+    /**
+     * 已经匹配过一次的Topic列表
+     * <Mqtt Topic, <Kafka Topic, variables>>
+     */
+    private final Map<String, Tuple2<String, Map<String, String>>> mqttTopicMappingCache = new ConcurrentHashMap<>();
 
     /**
      * <mqtt topic, kafka topic>
@@ -28,19 +32,15 @@ public class TopicMapperImpl implements TopicMapper {
      */
     private final Map<String, TopicWrapper> reversedTopicMappings = new HashMap<>();
 
-    private final TopicMatcher topicMatcher;
-
     @Inject
-    public TopicMapperImpl(ExtensionConfiguration extensionConfiguration,
-                           TopicMatcher topicMatcher) {
+    public TopicMapperImpl(ExtensionConfiguration extensionConfiguration) {
         extensionConfiguration.getTopicMappings()
                 .forEach((mqttTopic, kafkaTopic) -> {
                     var topicWrapper = new TopicWrapper()
-                            .withTopicName(mqttTopic);
+                            .withTopic(mqttTopic);
                     topicMappings.put(topicWrapper, kafkaTopic);
                     reversedTopicMappings.put(kafkaTopic, topicWrapper);
                 });
-        this.topicMatcher = topicMatcher;
     }
 
     @Override
@@ -50,45 +50,46 @@ public class TopicMapperImpl implements TopicMapper {
 
     @Override
     public String convertMqttTopic2KafkaTopic(String topic, Map<String, String> variables) {
-        Tuple2<String, TopicWrapper> tuple2;
-        if (topicMappingCache.containsKey(topic)) {
-            tuple2 = topicMappingCache.get(topic);
+        Tuple2<String, Map<String, String>> tuple2;
+        if (mqttTopicMappingCache.containsKey(topic)) {
+            tuple2 = mqttTopicMappingCache.get(topic);
         } else {
             tuple2 = lookup(topic);
-            topicMappingCache.put(topic, tuple2);
+            mqttTopicMappingCache.put(topic, tuple2);
         }
-        parseVariables(tuple2.getT2(), topic, variables);
+        variables.putAll(tuple2.getT2());
         return tuple2.getT1();
     }
 
     @Override
-    public String convertKafkaTopicMqttTopic(String topic, Map<String, String> variables) {
+    public String convertKafkaTopic2MqttTopic(String topic, Map<String, String> variables) {
+        if (reversedTopicMappings.containsKey(topic)) {
+            var topicWrapper = reversedTopicMappings.get(topic);
+            return topicWrapper.assembleTopic(variables);
+        }
         return null;
     }
 
-    private Tuple2<String, TopicWrapper> lookup(String topic) {
+    private Tuple2<String, Map<String, String>> lookup(String topic) {
         for (var entrySet : topicMappings.entrySet()) {
             var topicWrapper = entrySet.getKey();
             var kafkaTopic = entrySet.getValue();
             if (topicWrapper.isPattern()) {
                 var matcher = topicWrapper.getPattern().matcher(topic);
                 if (matcher.matches()) {
-                    return Tuples.of(topic, topicWrapper);
+                    var variables = new HashMap<String, String>();
+                    for (var index = 0; index < matcher.groupCount(); index++) {
+                        variables.put(topicWrapper.getVariables().get(index), matcher.group(index + 1));
+                    }
+                    return Tuples.of(kafkaTopic, variables);
                 }
             } else {
                 if (topicWrapper.getTopic().equals(topic)) {
-                    return Tuples.of(topic, topicWrapper);
+                    return Tuples.of(kafkaTopic, Collections.emptyMap());
                 }
             }
         }
         return null;
-    }
-
-    private void parseVariables(TopicWrapper topicWrapper, String topic, Map<String, String> variables) {
-        var matcher = topicWrapper.getPattern().matcher(topic);
-        for (var index = 0; index < matcher.groupCount(); index++) {
-            variables.put(topicWrapper.getVariables().get(index), matcher.group(index));
-        }
     }
 
 }

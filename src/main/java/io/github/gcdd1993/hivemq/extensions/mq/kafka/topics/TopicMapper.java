@@ -36,6 +36,6 @@ public interface TopicMapper {
      *                  kafka topic --> /sys/properties/upload, variables --> {"device-name":"device-1"}
      *                  mqtt topic --> /sys/device-1/properties/upload
      */
-    String convertKafkaTopicMqttTopic(String topic, Map<String, String> variables);
+    String convertKafkaTopic2MqttTopic(String topic, Map<String, String> variables);
 
 }

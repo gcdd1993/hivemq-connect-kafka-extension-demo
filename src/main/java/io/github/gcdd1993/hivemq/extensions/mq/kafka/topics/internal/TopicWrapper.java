@@ -1,5 +1,6 @@
 package io.github.gcdd1993.hivemq.extensions.mq.kafka.topics.internal;
 
+import com.hivemq.extension.sdk.api.annotations.NotNull;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -18,6 +19,7 @@ public class TopicWrapper {
 
     private static final String PATTERN_PARAM = "([a-zA-Z0-9]+)";
 
+    @NotNull
     private String topic;
     private Pattern pattern;
     private List<String> variables;
@@ -26,12 +28,23 @@ public class TopicWrapper {
         return pattern != null;
     }
 
-    public TopicWrapper withTopicName(String topicName) {
-        this.topic = topicName;
-        if (topicName.contains(VARIABLE_START_KEY)) {
+    public String assembleTopic(Map<String, String> variables) {
+        String result = topic;
+        if (isPattern()) {
+            for (var variableName : this.variables) {
+                var value = variables.get(variableName);
+                result = result.replace(VARIABLE_START_KEY + variableName + VARIABLE_END_KEY, value);
+            }
+        }
+        return result;
+    }
+
+    public TopicWrapper withTopic(String topic) {
+        this.topic = topic;
+        if (topic.contains(VARIABLE_START_KEY)) {
             var sb = new StringBuilder();
             variables = new ArrayList<>();
-            lookup(topicName, sb, variables);
+            lookup(topic, sb, variables);
             pattern = Pattern.compile(sb.toString());
         }
         return this;
