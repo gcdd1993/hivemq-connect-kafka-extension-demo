@@ -2,6 +2,7 @@ package io.github.gcdd1993.hivemq.extensions.mq.kafka.topics.internal;
 
 import com.google.inject.Inject;
 import io.github.gcdd1993.hivemq.extensions.mq.kafka.config.ExtensionConfiguration;
+import io.github.gcdd1993.hivemq.extensions.mq.kafka.exceptions.TopicMappingNotFoundException;
 import io.github.gcdd1993.hivemq.extensions.mq.kafka.topics.TopicMapper;
 import reactor.util.function.Tuple2;
 import reactor.util.function.Tuples;
@@ -89,7 +90,7 @@ public class TopicMapperImpl implements TopicMapper {
                 }
             }
         }
-        return null;
+        throw new TopicMappingNotFoundException(topic);
     }
 
 }

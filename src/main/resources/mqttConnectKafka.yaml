@@ -1,2 +1,8 @@
 cluster:
   bootstrap.servers: '101.132.242.66:9092'
+topicMappings:
+  '/sys/${product-name}/${device-name}/thing/event/property/post': '/sys/thing/event/property/post'
+  '/sys/${product-name}/${deviceName}/thing/event/property/post_reply': '/sys/thing/event/property/post_reply'
+  '/sys/${product-name}/${deviceName}/thing/service/property/set': '/sys/thing/service/property/set'
+  '/sys/${product-name}/${deviceName}/thing/event/${tsl.event.identifer}/post': '/sys/thing/event/${tsl.event.identifer}/post'
+  '/sys/${product-name}/${deviceName}/thing/event/${tsl.event.identifer}/post_reply': '/sys/thing/event/${tsl.event.identifer}/post_reply'

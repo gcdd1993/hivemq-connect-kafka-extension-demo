@@ -17,7 +17,7 @@ public class TopicWrapper {
     private static final String VARIABLE_START_KEY = "${";
     private static final char VARIABLE_END_KEY = '}';
 
-    private static final String PATTERN_PARAM = "([a-zA-Z0-9]+)";
+    private static final String PATTERN_PARAM = "([a-zA-Z0-9-]+)";
 
     @NotNull
     private String topic;

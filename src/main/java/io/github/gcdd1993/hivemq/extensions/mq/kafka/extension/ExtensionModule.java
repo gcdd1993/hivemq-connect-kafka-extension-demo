@@ -14,6 +14,8 @@ import io.github.gcdd1993.hivemq.extensions.mq.kafka.interceptors.PublishInbound
 import io.github.gcdd1993.hivemq.extensions.mq.kafka.interceptors.SubscribeInboundInterceptorImpl;
 import io.github.gcdd1993.hivemq.extensions.mq.kafka.producer.KafkaMqProducerImpl;
 import io.github.gcdd1993.hivemq.extensions.mq.kafka.producer.MqProducer;
+import io.github.gcdd1993.hivemq.extensions.mq.kafka.topics.TopicMapper;
+import io.github.gcdd1993.hivemq.extensions.mq.kafka.topics.internal.TopicMapperImpl;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -40,5 +42,7 @@ public class ExtensionModule extends AbstractModule {
                 .to(SubscribeInboundInterceptorImpl.class);
         bind(MqProducer.class)
                 .to(KafkaMqProducerImpl.class);
+        bind(TopicMapper.class)
+                .to(TopicMapperImpl.class);
     }
 }

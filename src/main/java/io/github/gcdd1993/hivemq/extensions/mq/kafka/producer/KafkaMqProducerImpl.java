@@ -1,6 +1,7 @@
 package io.github.gcdd1993.hivemq.extensions.mq.kafka.producer;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.hivemq.extension.sdk.api.annotations.NotNull;
 import io.github.gcdd1993.hivemq.extensions.mq.kafka.config.ExtensionConfiguration;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +21,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Slf4j
+@Singleton
 public class KafkaMqProducerImpl implements MqProducer {
 
     private final KafkaSender<UUID, Object> sender;
@@ -34,7 +36,7 @@ public class KafkaMqProducerImpl implements MqProducer {
 
         sender = KafkaSender.create(senderOptions);
         init();
-        counter(); // just for debug
+//        counter(); // just for debug
     }
 
     private void init() {
@@ -58,16 +60,16 @@ public class KafkaMqProducerImpl implements MqProducer {
                 .subscribe()
         ;
     }
-
-    private void counter() {
-        Flux
-                .interval(Duration.ofMillis(1000))
-                .doOnEach(__ -> {
-                    log.info("published message {}", counter.get());
-                })
-                .subscribe()
-        ;
-    }
+//
+//    private void counter() {
+//        Flux
+//                .interval(Duration.ofMillis(1000))
+//                .doOnEach(__ -> {
+//                    log.info("published message {}", counter.get());
+//                })
+//                .subscribe()
+//        ;
+//    }
 
     @Override
     public void publish(@NotNull String topic, @NotNull Object message) {

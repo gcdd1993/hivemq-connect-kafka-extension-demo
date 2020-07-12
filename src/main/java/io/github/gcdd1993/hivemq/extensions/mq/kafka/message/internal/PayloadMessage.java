@@ -4,6 +4,9 @@ import io.github.gcdd1993.hivemq.extensions.mq.kafka.message.IPayloadMessage;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by gaochen on 2020/7/10.
  */
@@ -16,6 +19,9 @@ public class PayloadMessage
         extends AbstractMessage
         implements IPayloadMessage {
     private Object payload;
+
+    @Builder.Default
+    private Map<String, String> variables = new HashMap<>();
 
     @Override
     public Object payload() {

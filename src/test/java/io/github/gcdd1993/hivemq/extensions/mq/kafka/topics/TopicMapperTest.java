@@ -23,12 +23,10 @@ class TopicMapperTest {
                     put("/ota/device/upgrade/${productKey}/${deviceName}", "/ota/device/upgrade");
                     put("/sys/${productKey}/${deviceName}/thing/deviceinfo/update", "/sys/thing/deviceinfo/update");
                     put("/sys/${productKey}/${deviceName}/thing/deviceinfo/update_reply", "/sys/thing/deviceinfo/update_reply");
+                    put("/sys/${product-name}/${device-name}/thing/event/property/post", "/sys/thing/event/property/post");
                 }}
         );
-        topicMapper = new TopicMapperImpl(
-                extensionConfiguration,
-                null
-        );
+        topicMapper = new TopicMapperImpl(extensionConfiguration);
     }
 
     @Test
@@ -39,7 +37,7 @@ class TopicMapperTest {
     @Test
     void convertMqttTopic2KafkaTopic() {
         var variables = new HashMap<String, String>();
-        var kafkaTopic = topicMapper.convertMqttTopic2KafkaTopic("/ota/device/inform/a1GI5IafAM3/device01", variables);
+        var kafkaTopic = topicMapper.convertMqttTopic2KafkaTopic("/sys/client-test0006/client-test0006/thing/event/property/post", variables);
         System.out.println("kafkaTopic: " + kafkaTopic);
         System.out.println("variables: " + variables);
     }

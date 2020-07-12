@@ -68,4 +68,27 @@ public class ExtensionConfiguration {
 
         return props;
     }
+
+    @Override
+    public String toString() {
+        var sb = new StringBuilder();
+        sb.append("cluster:\n");
+        beautifyShow(cluster, sb);
+        sb.append("consumer:\n");
+        beautifyShow(consumer, sb);
+        sb.append("producer:\n");
+        beautifyShow(producer, sb);
+        sb.append("topicMappings:\n");
+        beautifyShow(topicMappings, sb);
+        return sb.toString();
+    }
+
+    private void beautifyShow(Map<?, ?> values, StringBuilder sb) {
+        values.forEach((k, v) ->
+                sb
+                        .append(k)
+                        .append("=")
+                        .append(v)
+                        .append("\n"));
+    }
 }
