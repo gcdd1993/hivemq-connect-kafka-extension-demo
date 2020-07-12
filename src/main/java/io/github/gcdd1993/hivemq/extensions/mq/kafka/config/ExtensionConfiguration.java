@@ -17,6 +17,9 @@ import java.util.Map;
 @NoArgsConstructor
 public class ExtensionConfiguration {
 
+    private static final String LINE_BREAK = "\n";
+    private static final String TAB = "\t";
+
     @Builder.Default
     private Map<String, Object> cluster = new HashMap<>();
     @Builder.Default
@@ -72,23 +75,35 @@ public class ExtensionConfiguration {
     @Override
     public String toString() {
         var sb = new StringBuilder();
-        sb.append("cluster:\n");
+
+        sb.append(LINE_BREAK);
+        // cluster
+        sb.append("cluster:");
+        sb.append(LINE_BREAK);
         beautifyShow(cluster, sb);
-        sb.append("consumer:\n");
+        // consumer
+        sb.append("consumer:");
+        sb.append(LINE_BREAK);
         beautifyShow(consumer, sb);
-        sb.append("producer:\n");
+        // producer
+        sb.append("producer:");
+        sb.append(LINE_BREAK);
         beautifyShow(producer, sb);
-        sb.append("topicMappings:\n");
+        // topicMappings
+        sb.append("topicMappings:");
+        sb.append(LINE_BREAK);
         beautifyShow(topicMappings, sb);
+
         return sb.toString();
     }
 
     private void beautifyShow(Map<?, ?> values, StringBuilder sb) {
         values.forEach((k, v) ->
                 sb
+                        .append(TAB)
                         .append(k)
                         .append("=")
                         .append(v)
-                        .append("\n"));
+                        .append(LINE_BREAK));
     }
 }

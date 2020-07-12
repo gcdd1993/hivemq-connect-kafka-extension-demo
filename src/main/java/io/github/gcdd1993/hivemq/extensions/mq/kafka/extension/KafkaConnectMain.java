@@ -23,7 +23,6 @@ public class KafkaConnectMain implements ExtensionMain {
                                @NotNull ExtensionStartOutput extensionStartOutput) {
         loadConfig(extensionStartInput, extensionStartOutput)
                 .ifPresent(config -> {
-                    log.info(config.toString());
                     var injector = Guice.createInjector(new ExtensionModule(config));
 
                     var clientInitializer = injector.getInstance(ClientInitializer.class);
